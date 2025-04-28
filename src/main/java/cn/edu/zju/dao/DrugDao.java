@@ -67,7 +67,7 @@ public class DrugDao extends BaseDao {
                 log.info("", e);
             }
         });
-        return drugs
+        return drugs;
     }
 
     public Drug getDrugByName(String name) {
