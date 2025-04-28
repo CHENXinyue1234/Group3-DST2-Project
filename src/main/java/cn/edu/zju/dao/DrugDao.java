@@ -109,6 +109,6 @@ public class DrugDao extends BaseDao {
             }
         });
 
-        return result[0];
+        return result[];
     }
 }
