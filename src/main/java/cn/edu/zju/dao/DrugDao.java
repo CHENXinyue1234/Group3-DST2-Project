@@ -71,12 +71,19 @@ public class DrugDao extends BaseDao {
     }
 
     public Drug getDrugByName(String name) {
-        final Drug[] result = {null};  // Use an array to capture result inside lambda
+        final Drug[] result = {null};
 
         DBUtils.execSQL(connection -> {
             try {
                 PreparedStatement stmt = connection.prepareStatement(
-                        "SELECT id, name, obj_cls, drug_url, biomarker FROM drug WHERE LOWER(name) = LOWER(?)"
+                        "SELECT d.id, d.name, d.obj_cls, d.drug_url, d.biomarker, " +
+                                "GROUP_CONCAT(DISTINCT dl.id) AS drug_label_ids, " +
+                                "GROUP_CONCAT(DISTINCT dg.id) AS dosing_guideline_ids " +
+                                "FROM drug d " +
+                                "LEFT JOIN drug_label dl ON d.id = dl.drug_id " +
+                                "LEFT JOIN dosing_guideline dg ON d.id = dg.drug_id " +
+                                "WHERE LOWER(d.name) = LOWER(?) " +
+                                "GROUP BY d.id, d.name, d.obj_cls, d.drug_url, d.biomarker"
                 );
                 stmt.setString(1, name);
                 ResultSet rs = stmt.executeQuery();
@@ -87,8 +94,14 @@ public class DrugDao extends BaseDao {
                     String objCls = rs.getString("obj_cls");
                     String drugUrl = rs.getString("drug_url");
                     boolean biomarker = rs.getBoolean("biomarker");
+                    String drugLabelIds = rs.getString("drug_label_ids");
+                    String dosingGuidelineIds = rs.getString("dosing_guideline_ids");
 
-                    result[0] = new Drug(id, drugName, biomarker, drugUrl, objCls);
+                    Drug drug = new Drug(id, drugName, biomarker, drugUrl, objCls);
+                    drug.setDrugLabelId(drugLabelIds);
+                    drug.setDosingGuidelineId(dosingGuidelineIds);
+
+                    result[0] = drug;
                 }
 
             } catch (SQLException e) {
@@ -96,6 +109,6 @@ public class DrugDao extends BaseDao {
             }
         });
 
-        return result[0];  // Return the result from lambda
+        return result[0];
     }
 }
