@@ -41,7 +41,10 @@
     </style>
 </head>
 <body>
-<jsp:include page="head.jsp" />
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Precision Medicine Matching System</a>
+
+</nav>
 
 <div class="container-fluid">
     <div class="row">
@@ -53,8 +56,15 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h2>Dashboard</h2>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive mb-4">
                 Welcome to use Precision Medicine Matching System
+            </div>
+            <div class="mb-4">
+                <h4>Search for a Drug</h4>
+                <form action="${pageContext.request.contextPath}/searchDrug" method="get" class="form-inline">
+                    <input type="text" name="drugName" class="form-control mr-2" placeholder="Enter drug name..." required />
+                    <button type="submit" class="btn btn-success">Search</button>
+                </form>
             </div>
         </main>
     </div>
